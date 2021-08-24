@@ -1,6 +1,12 @@
 <template>
   <div class="container mt-4">
     <h4>Olá, {{ user.name }}</h4>
+    
+    <p>
+      <b>Banco:</b> 352<br>
+      <b>Conta:</b> {{ user.account }}<br>
+      <b>Agência:</b> 0001
+    </p>
 
     <hr />
 
