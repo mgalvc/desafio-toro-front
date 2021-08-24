@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 export default class AuthService {
-  static async login(email, password) {
+  static async login(cpf, password) {
     try {
       const { data } = await axios.post('http://localhost:3000/auth/login', {
-        email, password
+        cpf, password
       })
       return { data }
     } catch(err) {

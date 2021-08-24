@@ -5,11 +5,11 @@
         <div><h5>Acesse a sua conta</h5></div>
         <div v-if="error" class="alert alert-danger d-flex align-items-center" role="alert">
           <i class="bi bi-exclamation-triangle-fill me-2"></i>
-          <div> Credenciais inválidas</div>
+          <div>{{ error }}</div>
         </div>
         <div class="form-group">
-          <label>E-mail</label>
-          <input v-model="email" class="form-control" type="email" />
+          <label>CPF</label>
+          <input v-model="cpf" class="form-control" type="cpf" />
         </div>
         <div class="form-group">
           <label>Senha</label>
@@ -31,27 +31,36 @@
 <script>
 import { computed, ref } from "@vue/reactivity";
 import AuthService from "../services/authService";
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import { useAuth } from '../store/auth';
 
 export default {
   setup() {
-    const email = ref("");
-    const password = ref("");
-    const error = ref(false);
+    const { setToken } = useAuth();
     const { push } = useRouter();
+    const { query: { sessionExpired } } = useRoute();
+    
+    const cpf = ref('');
+    const password = ref('');
+    const error = ref(false);
 
     const doLogin = async () => {
-      const res = await AuthService.login(email.value, password.value);
+      const res = await AuthService.login(cpf.value, password.value);
       if(res.error) {
-        error.value = true;
+        error.value = 'Credenciais inválidas';
       } else {
+        setToken(res.data.access_token);
         push('/');
       }
     };
 
-    const noCredentials = computed(() => !email.value || !password.value);
+    const noCredentials = computed(() => !cpf.value || !password.value);
 
-    return { email, password, noCredentials, error, doLogin };
+    if(sessionExpired) {
+      error.value = 'Sua sessão expirou';
+    }
+
+    return { cpf, password, noCredentials, error, doLogin };
   },
 };
 </script>
