@@ -32,7 +32,7 @@
             <h5 class="card-title">{{ stock.symbol }} - {{ currency(stock.currentPrice * stock.amount) }}</h5>
             <div class="card-text">
               <div><b>Preço atual:</b> {{ currency(stock.currentPrice) }}</div>
-              <div><b>Quantidade:</b> {{ currency(stock.amount) }}</div>
+              <div><b>Quantidade:</b> {{ stock.amount }}</div>
             </div>
           </div>
         </div>
