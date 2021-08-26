@@ -1,21 +1,23 @@
-# front
+# Desafio Toro - Front
 
-## Project setup
+## Instalação
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+Crie o arquivo .env como uma cópia do arquivo .env.example disponibilizado na raíz e modifique os valores de acordo com as configurações do seu ambiente. Ele é obrigatório para que a aplicação seja executada corretamente.
+
+### Execução em modo de desenvolvimento
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Compilação para produção
 ```
 npm run build
 ```
 
-### Lints and fixes files
+### Execução de lint
 ```
 npm run lint
 ```
