@@ -81,6 +81,7 @@
             <p><b>Seu saldo:</b> {{ currency(wallet.checkingAccountAmount) }}</p>
             <div><b>Quantidade:</b> <input type="range" class="form-range" min="0" :max="maxBuyingStocks" v-model="buyingStocksAmount"></div>
             <div class="text-center">{{ buyingStocksAmount }}</div>
+            <div><b>Total da compra:</b> {{ currency(buyingStocksTotalPrice) }}</div>
           </div>
           <div class="modal-footer">
             <button
@@ -99,7 +100,7 @@
 </template>
 
 <script>
-import { onMounted, ref } from "@vue/runtime-core";
+import { computed, onMounted, ref } from "@vue/runtime-core";
 import { useUser } from "../store/user";
 import { useWallet } from "../store/wallet";
 import { useStock } from "../store/stock";
@@ -135,7 +136,9 @@ export default {
       buyingStocksAmount.value = 0;
     };
 
-    return { user, wallet, trends, buyingStock, maxBuyingStocks, buyingStocksAmount, currency, setBuyingStock };
+    const buyingStocksTotalPrice = computed(() => buyingStock.value.currentPrice * buyingStocksAmount.value);
+
+    return { user, wallet, trends, buyingStock, maxBuyingStocks, buyingStocksAmount, buyingStocksTotalPrice, currency, setBuyingStock };
   },
 };
 </script>
