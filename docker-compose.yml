@@ -4,7 +4,5 @@ services:
   front_app:
     build: .
     ports:
-      - 8081:80
-    environment: 
-      VUE_APP_API_BASE_URL: http://localhost:3000
+      - 80:80
     container_name: front_app_container
