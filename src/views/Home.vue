@@ -44,7 +44,7 @@
     <h4>Top 5 ativos</h4>
 
     <div class="row">
-      <div class="col col-3 mt-2" v-for="stock in trends" :key="stock.symbol">
+      <div class="col col-sm-6 col-md-3 mt-2" v-for="stock in trends" :key="stock.symbol">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">{{ stock.symbol }}</h5>
