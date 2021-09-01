@@ -45,7 +45,7 @@
     <h4>Top 5 ativos</h4>
 
     <div class="row">
-      <div class="col col-sm-12 col-md-6 mt-2" v-for="stock in trends" :key="stock.symbol">
+      <div class="col col-12 col-sm-6 col-md-4 col-lg-3 mt-2" v-for="stock in trends" :key="stock.symbol">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">{{ stock.symbol }}</h5>
@@ -105,12 +105,15 @@ import { computed, onMounted, ref } from "@vue/runtime-core";
 import { useUser } from "../store/user";
 import { useWallet } from "../store/wallet";
 import { useStock } from "../store/stock";
+import { useAuth } from "../store/auth";
 
 export default {
   setup() {
     const { getUser } = useUser();
     const { getWallet } = useWallet();
     const { getTrends } = useStock();
+    const { logout } = useAuth();
+
     const user = ref({});
     const wallet = ref({});
     const trends = ref({});
@@ -139,7 +142,7 @@ export default {
 
     const buyingStocksTotalPrice = computed(() => buyingStock.value.currentPrice * buyingStocksAmount.value);
 
-    return { user, wallet, trends, buyingStock, maxBuyingStocks, buyingStocksAmount, buyingStocksTotalPrice, currency, setBuyingStock };
+    return { user, wallet, trends, buyingStock, maxBuyingStocks, buyingStocksAmount, buyingStocksTotalPrice, currency, setBuyingStock, logout };
   },
 };
 </script>
