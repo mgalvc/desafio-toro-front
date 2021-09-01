@@ -1,6 +1,7 @@
 <template>
   <div class="container mt-4">
     <h4>Olá, {{ user.name }}</h4>
+    <button class="btn btn-warning btn-sm mb-4" @click.prevent="logout">Sair</button>
 
     <p>
       <b>Banco:</b> 352<br />

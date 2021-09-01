@@ -17,5 +17,10 @@ export const useAuth = () => {
     return token;
   }
 
-  return { token: getToken(), setToken };
+  const logout = () => {
+    setToken(null);
+    push('/auth');
+  }
+
+  return { token: getToken(), setToken, logout };
 }
