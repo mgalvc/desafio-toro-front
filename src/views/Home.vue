@@ -105,7 +105,16 @@
                 v-model="buyingStocksAmount"
               />
             </div>
-            <div class="text-center">{{ buyingStocksAmount }}</div>
+            <div class="text-center">
+              <input
+                type="number"
+                class="form-control"
+                id="input-amount"
+                min="0"
+                :max="maxBuyingStocks"
+                v-model="buyingStocksAmount"
+              />
+            </div>
             <div>
               <b>Total da compra:</b> {{ currency(buyingStocksTotalPrice) }}
             </div>
@@ -136,7 +145,7 @@
             >
               Cancelar
             </button>
-            <button type="button" :disabled="buyingStocksAmount == 0" class="btn btn-primary" @click.prevent="buy">
+            <button type="button" :disabled="buyingStocksAmount <= 0" class="btn btn-primary" @click.prevent="buy">
               Comprar
             </button>
           </div>
@@ -236,3 +245,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#input-amount {
+  width: auto;
+  margin: auto;
+}
+</style>
