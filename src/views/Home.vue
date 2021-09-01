@@ -1,7 +1,9 @@
 <template>
   <div class="container mt-4">
     <h4>Olá, {{ user.name }}</h4>
-    <button class="btn btn-warning btn-sm mb-4" @click.prevent="logout">Sair</button>
+    <button class="btn btn-warning btn-sm mb-4" @click.prevent="logout">
+      Sair
+    </button>
 
     <p>
       <b>Banco:</b> 352<br />
@@ -18,34 +20,16 @@
     <h5>Saldo em ativos</h5>
     <p>{{ currency(wallet.positionsAmount) }}</p>
 
-    <!-- <hr />
-
-    <h4>Seus ativos</h4>
-
-    <div class="row">
-      <div
-        class="col col-3 mt-2"
-        v-for="stock in wallet.positions"
-        :key="stock.symbol"
-      >
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">{{ stock.symbol }} - {{ currency(stock.currentPrice * stock.amount) }}</h5>
-            <div class="card-text">
-              <div><b>Preço atual:</b> {{ currency(stock.currentPrice) }}</div>
-              <div><b>Quantidade:</b> {{ stock.amount }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
-
     <hr />
 
     <h4>Top 5 ativos</h4>
 
     <div class="row">
-      <div class="col col-12 col-sm-6 col-md-4 col-lg-3 mt-2" v-for="stock in trends" :key="stock.symbol">
+      <div
+        class="col mt-2"
+        v-for="stock in trends"
+        :key="stock.symbol"
+      >
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">{{ stock.symbol }}</h5>
@@ -55,7 +39,8 @@
                 <button
                   class="btn btn-primary btn-sm mt-2"
                   @click.prevent="setBuyingStock(stock)"
-                  data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                  data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop"
                 >
                   Comprar
                 </button>
@@ -66,11 +51,39 @@
       </div>
     </div>
 
+    <hr />
+
+    <h4>Seus ativos</h4>
+
+    <div class="row">
+      <div
+        class="col col-12 col-sm-6 col-md-4 col-lg-3 mt-2"
+        v-for="stock in wallet.positions"
+        :key="stock.symbol"
+      >
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">
+              {{ stock.symbol }}
+            </h5>
+            <div class="card-text">
+              <div><b>{{ currency(stock.currentPrice * stock.amount) }}</b></div>
+              <div><b>Preço atual:</b> {{ currency(stock.currentPrice) }}</div>
+              <div><b>Quantidade:</b> {{ stock.amount }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="modal fade" tabindex="-1" id="staticBackdrop">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">{{ buyingStock.symbol }} - {{ currency(buyingStock.currentPrice) }}</h5>
+            <h5 class="modal-title">
+              {{ buyingStock.symbol }} -
+              {{ currency(buyingStock.currentPrice) }}
+            </h5>
             <button
               type="button"
               class="btn-close"
@@ -79,10 +92,41 @@
             ></button>
           </div>
           <div class="modal-body">
-            <p><b>Seu saldo:</b> {{ currency(wallet.checkingAccountAmount) }}</p>
-            <div><b>Quantidade:</b> <input type="range" class="form-range" min="0" :max="maxBuyingStocks" v-model="buyingStocksAmount"></div>
+            <p>
+              <b>Seu saldo:</b> {{ currency(wallet.checkingAccountAmount) }}
+            </p>
+            <div>
+              <b>Quantidade:</b>
+              <input
+                type="range"
+                class="form-range"
+                min="0"
+                :max="maxBuyingStocks"
+                v-model="buyingStocksAmount"
+              />
+            </div>
             <div class="text-center">{{ buyingStocksAmount }}</div>
-            <div><b>Total da compra:</b> {{ currency(buyingStocksTotalPrice) }}</div>
+            <div>
+              <b>Total da compra:</b> {{ currency(buyingStocksTotalPrice) }}
+            </div>
+            <div class="mt-2">
+              <div
+                v-if="orderError"
+                class="alert alert-danger d-flex align-items-center"
+                role="alert"
+              >
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <div>{{ orderError }}</div>
+              </div>
+              <div
+                v-if="orderSuccess"
+                class="alert alert-success d-flex align-items-center"
+                role="alert"
+              >
+                <i class="bi bi-check-lg me-2"></i>
+                <div>{{ orderSuccess }}</div>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button
@@ -92,7 +136,9 @@
             >
               Cancelar
             </button>
-            <button type="button" class="btn btn-primary">Comprar</button>
+            <button type="button" :disabled="buyingStocksAmount == 0" class="btn btn-primary" @click.prevent="buy">
+              Comprar
+            </button>
           </div>
         </div>
       </div>
@@ -110,7 +156,7 @@ import { useAuth } from "../store/auth";
 export default {
   setup() {
     const { getUser } = useUser();
-    const { getWallet } = useWallet();
+    const { getWallet, sendOrder } = useWallet();
     const { getTrends } = useStock();
     const { logout } = useAuth();
 
@@ -120,11 +166,17 @@ export default {
     const buyingStock = ref({});
     const maxBuyingStocks = ref(0);
     const buyingStocksAmount = ref(0);
+    const orderError = ref("");
+    const orderSuccess = ref("");
 
-    onMounted(async () => {
+    const updateData = async () => {
       user.value = await getUser();
       wallet.value = await getWallet();
       trends.value = await getTrends();
+    };
+
+    onMounted(() => {
+      updateData();
     });
 
     const currency = (raw) => {
@@ -136,13 +188,51 @@ export default {
 
     const setBuyingStock = (stock) => {
       buyingStock.value = stock;
-      maxBuyingStocks.value = Math.floor(wallet.value.checkingAccountAmount / stock.currentPrice);
       buyingStocksAmount.value = 0;
+      orderError.value = "";
+      orderSuccess.value = "";
+      maxBuyingStocks.value = Math.floor(
+        wallet.value.checkingAccountAmount / stock.currentPrice
+      );
     };
 
-    const buyingStocksTotalPrice = computed(() => buyingStock.value.currentPrice * buyingStocksAmount.value);
+    const buyingStocksTotalPrice = computed(
+      () => buyingStock.value.currentPrice * buyingStocksAmount.value
+    );
 
-    return { user, wallet, trends, buyingStock, maxBuyingStocks, buyingStocksAmount, buyingStocksTotalPrice, currency, setBuyingStock, logout };
+    const buy = async () => {
+      orderError.value = "";
+      orderSuccess.value = "";
+
+      const res = await sendOrder(
+        buyingStock.value.symbol,
+        buyingStocksAmount.value
+      );
+
+      if (!res.error) {
+        orderSuccess.value = res.message;
+        buyingStocksAmount.value = 0;
+        updateData();
+      } else {
+        orderError.value = res.error;
+      }
+    };
+
+    return {
+      user,
+      wallet,
+      trends,
+      buyingStock,
+      maxBuyingStocks,
+      buyingStocksAmount,
+      buyingStocksTotalPrice,
+      orderError,
+      orderSuccess,
+      currency,
+      setBuyingStock,
+      logout,
+      buy,
+    };
   },
 };
 </script>

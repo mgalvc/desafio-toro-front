@@ -8,5 +8,9 @@ export const useWallet = () => {
     return WalletService.getUserWallet(token);
   }
 
-  return { getWallet };
+  const sendOrder = async (symbol, amount) => {
+    return WalletService.sendOrder(symbol, parseInt(amount), token);
+  }
+
+  return { getWallet, sendOrder };
 }
