@@ -55,7 +55,7 @@
 
     <h4>Seus ativos</h4>
 
-    <div class="row">
+    <div class="row mb-4">
       <div
         class="col col-12 col-sm-6 col-md-4 col-lg-3 mt-2"
         v-for="stock in wallet.positions"
