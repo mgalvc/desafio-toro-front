@@ -53,7 +53,7 @@
 
     <hr />
 
-    <h4>Seus ativos</h4>
+    <h4 v-if="wallet.positions?.length">Seus ativos</h4>
 
     <div class="row mb-4">
       <div
