@@ -7,9 +7,13 @@
           <i class="bi bi-exclamation-triangle-fill me-2"></i>
           <div>{{ error }}</div>
         </div>
+        <div v-if="welcome" class="alert alert-success d-flex align-items-center" role="alert">
+          <i class="bi bi-check-lg me-2"></i>
+          <div>{{ welcome }}</div>
+        </div>
         <div class="form-group">
           <label>CPF</label>
-          <input v-model="cpf" class="form-control" type="cpf" />
+          <input v-model="cpf" class="form-control" type="text" />
         </div>
         <div class="form-group">
           <label>Senha</label>
@@ -23,6 +27,9 @@
         >
           Entrar
         </button>
+        <p class="mt-2">
+          <router-link to="register">Criar conta</router-link>
+        </p>
       </form>
     </div>
   </div>
@@ -38,11 +45,12 @@ export default {
   setup() {
     const { setToken } = useAuth();
     const { push } = useRouter();
-    const { query: { sessionExpired } } = useRoute();
+    const { query: { sessionExpired, registered } } = useRoute();
     
     const cpf = ref('');
     const password = ref('');
     const error = ref(false);
+    const welcome = ref(false);
 
     const doLogin = async () => {
       const res = await AuthService.login(cpf.value, password.value);
@@ -60,7 +68,11 @@ export default {
       error.value = 'Sua sessão expirou';
     }
 
-    return { cpf, password, noCredentials, error, doLogin };
+    if(registered) {
+      welcome.value = 'Seja bem vindo! Acessa agora a sua nova conta';
+    }
+
+    return { cpf, password, noCredentials, error, welcome, doLogin };
   },
 };
 </script>

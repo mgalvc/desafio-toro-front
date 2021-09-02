@@ -2,11 +2,14 @@ import UserService from "../services/userService";
 import { useAuth } from "./auth";
 
 export const useUser = () => {
-  const { token } = useAuth();
-
   const getUser = async () => {
+    const { token } = useAuth();
     return UserService.getUser(token);
   }
 
-  return { getUser };
+  const register = async (name, cpf, password) => {
+    return UserService.register(name, cpf, password);
+  }
+
+  return { getUser, register };
 }
