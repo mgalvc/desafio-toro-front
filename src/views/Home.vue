@@ -181,7 +181,6 @@ export default {
     const orderSuccess = ref("");
 
     const updateData = async () => {
-      console.log('aqui')
       user.value = await getUser();
       wallet.value = await getWallet();
       trends.value = await getTrends();
