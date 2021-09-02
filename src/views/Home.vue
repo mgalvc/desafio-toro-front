@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-4">
     <h4>Olá, {{ user.name }}</h4>
-    <button class="btn btn-warning btn-sm mb-4" @click.prevent="logout">
+    <button class="btn btn-warning btn-sm mb-4" @click.prevent="onLogout">
       Sair
     </button>
 
@@ -161,6 +161,7 @@ import { useUser } from "../store/user";
 import { useWallet } from "../store/wallet";
 import { useStock } from "../store/stock";
 import { useAuth } from "../store/auth";
+import { useRouter } from 'vue-router';
 
 export default {
   setup() {
@@ -168,6 +169,7 @@ export default {
     const { getWallet, sendOrder } = useWallet();
     const { getTrends } = useStock();
     const { logout } = useAuth();
+    const { push } = useRouter();
 
     const user = ref({});
     const wallet = ref({});
@@ -179,13 +181,14 @@ export default {
     const orderSuccess = ref("");
 
     const updateData = async () => {
+      console.log('aqui')
       user.value = await getUser();
       wallet.value = await getWallet();
       trends.value = await getTrends();
     };
 
-    onMounted(() => {
-      updateData();
+    onMounted(async () => {
+      await updateData();
     });
 
     const currency = (raw) => {
@@ -221,11 +224,16 @@ export default {
       if (!res.error) {
         orderSuccess.value = res.message;
         buyingStocksAmount.value = 0;
-        updateData();
+        await updateData();
       } else {
         orderError.value = res.error;
       }
     };
+
+    const onLogout = () => {
+      logout();
+      push('/auth');
+    }
 
     return {
       user,
@@ -239,7 +247,7 @@ export default {
       orderSuccess,
       currency,
       setBuyingStock,
-      logout,
+      onLogout,
       buy,
     };
   },
